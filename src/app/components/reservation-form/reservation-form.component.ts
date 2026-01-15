@@ -1,4 +1,8 @@
+import { ActivatedRoute, Router } from '@angular/router';
+import { Reservation } from './../../models/reservation';
+import { ReservationService } from './../../services/reservation.service';
 import { Component } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-reservation-form',
@@ -6,5 +10,45 @@ import { Component } from '@angular/core';
   styleUrls: ['./reservation-form.component.css']
 })
 export class ReservationFormComponent {
+  reservationForm: FormGroup = new FormGroup({});
 
+  constructor(
+    private formBuilder: FormBuilder,
+    private reservationService: ReservationService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
+    this.reservationForm = this.formBuilder.group({
+      checkInDate: new FormControl('', Validators.required),
+      checkOutDate: new FormControl('', Validators.required),
+      guestName: new FormControl('', Validators.required),
+      guestEmail: new FormControl('', [Validators.required, Validators.email]),
+      roomNumber: new FormControl('', Validators.required)
+    });
+
+    let id = this.activatedRoute.snapshot.paramMap.get('id');
+    if(id) {
+      let reservation: Reservation | undefined = this.reservationService.getReservation(id);
+
+      if(reservation) {
+        this.reservationForm.patchValue(reservation);
+      }
+    }
+  }
+
+  onSubmit() {
+    if(this.reservationForm.valid) {
+      let reservation: Reservation = this.reservationForm.value;
+
+      let id = this.activatedRoute.snapshot.paramMap.get('id');
+      if(id) {
+        // update
+        this.reservationService.updateReservation(id, reservation);
+      } else {
+        this.reservationService.addReservation(reservation);
+      }
+      this.reservationForm.reset(); // resets all values
+      this.router.navigate(['/list']);
+    }
+  }
 }
