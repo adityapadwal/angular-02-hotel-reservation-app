@@ -28,11 +28,11 @@ export class ReservationFormComponent {
 
     let id = this.activatedRoute.snapshot.paramMap.get('id');
     if(id) {
-      let reservation: Reservation | undefined = this.reservationService.getReservation(id);
-
-      if(reservation) {
-        this.reservationForm.patchValue(reservation);
-      }
+      this.reservationService.getReservation(id).subscribe((reservation) => {
+        if(reservation) {
+          this.reservationForm.patchValue(reservation);
+        }
+      });
     }
   }
 
@@ -43,9 +43,13 @@ export class ReservationFormComponent {
       let id = this.activatedRoute.snapshot.paramMap.get('id');
       if(id) {
         // update
-        this.reservationService.updateReservation(id, reservation);
+        this.reservationService.updateReservation(id, reservation).subscribe((newUpdatedReservation) => {
+          console.log(`Reservation with ID: ${newUpdatedReservation.id} updated successfully`);
+        })
       } else {
-        this.reservationService.addReservation(reservation);
+        this.reservationService.addReservation(reservation).subscribe((addedReservation) => {
+          console.log(`Reservation with ID: ${addedReservation.id} added successfully`);
+        })
       }
       this.reservationForm.reset(); // resets all values
       this.router.navigate(['/list']);

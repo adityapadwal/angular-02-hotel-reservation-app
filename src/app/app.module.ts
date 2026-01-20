@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { PageNotFoundComponentComponent } from './components/page-not-found-component/page-not-found-component.component';
 import { HomeModule } from './modules/home/home.module';
 import { ReservationModule } from './modules/reservation/reservation.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ReservationModule } from './modules/reservation/reservation.module';
     BrowserModule,
     AppRoutingModule,
     HomeModule,
-    ReservationModule
+    ReservationModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
